@@ -1,0 +1,18 @@
+# Normalización de texto: el repositorio guarda LF, PowerShell exige CRLF
+* text=auto
+
+# OptiLite.ps1 DEBE conservar CRLF y BOM UTF-8 (PowerShell 5.1 + acentos)
+*.ps1 text eol=crlf
+
+# Documentación y configuración
+*.md text
+*.yml text
+*.yaml text
+*.gitignore text
+*.gitattributes text
+
+# Binarios
+*.png binary
+*.jpg binary
+*.ico binary
+*.zip binary

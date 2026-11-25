@@ -20,13 +20,30 @@
 
 ## Características
 
-- **24 ajustes reversibles** entre Rendimiento, Juegos y Privacidad: cada uno
+- **26 ajustes reversibles** entre Rendimiento, Juegos y Privacidad: cada uno
   es un interruptor que lee el estado *real* del sistema y aplica el cambio al
   instante.
+- **Idioma ES/EN conmutable**: en la barra superior hay un selector que cambia
+  toda la interfaz (paneles, tarjetas, descripciones, mensajes) al instante;
+  la preferencia queda guardada en `%LOCALAPPDATA%\OptiLite\optilite.json`
+  y el español es el idioma por defecto.
+- **Gestor de programas de inicio**: el panel *Inicio* lista todo lo que
+  arranca con Windows (claves Run HKLM/HKCU + carpeta Inicio) y permite
+  desactivar/reactivar cada entrada con un interruptor — nada se borra, así
+  que siempre es reversible.
+- **Pila de deshacer**: cada cambio aplicado se guarda en una pila de hasta
+  50 entradas (`optilite-undo.json`); *Deshacer último cambio* los revierte
+  uno por uno.
+- **Exportar / importar copia de seguridad**: guarda el estado de todos los
+  ajustes en un `.json` y reaplícalo cuando quieras o en otro PC.
+- **Modo vista previa**: activa *Vista previa* y los interruptores/perfiles
+  te dirán exactamente qué *cambiarían* — sin tocar nada.
 - **Perfiles de un clic**: Competitivo (Valorant/CS2), Juegos AAA, Cloud/Xbox y
   *Restaurar Windows* (devuelve todos los ajustes a los valores de fábrica).
 - **Punto de restauración propio**: antes de aplicar cualquier perfil se guarda
   una instantánea JSON de todos los ajustes, reversible con un clic.
+- **Diagnóstico en el Resumen**: salud del disco (SMART), desgaste de batería,
+  servicios en ejecución y top-5 de procesos por RAM.
 - **Limpieza**: carpetas TEMP, Prefetch, logs CBS, informes de errores (WER),
   caché de Windows Update, Papelera y caché DNS.
 - **Plan de energía Gaming Ultimate** (duplica Ultimate Performance, desactiva
@@ -37,7 +54,7 @@
   con un interruptor; si el software no está instalado, el interruptor queda
   en gris automáticamente.
 - **Cero acceso a red.** Todo es local; los únicos archivos que escribe son un
-  registro y un JSON de restauración en `%LOCALAPPDATA%\OptiLite\`.
+  registro y varios JSON de estado en `%LOCALAPPDATA%\OptiLite\`.
 
 ## Inicio rápido
 
@@ -76,6 +93,8 @@
 | Windows Search (indexación) | Sin indexado en segundo plano | El buscador será más lento |
 | Hibernación e Inicio rápido | Libera `hiberfil.sys` (GB en disco) | Instantáneo |
 | Apps en segundo plano | Las apps UWP no siguen abiertas | Los programas de escritorio no se ven afectados |
+| TCP Autotuning | Off fija la ventana TCP | Reinicio; suele *bajar* el throughput — solo para pruebas |
+| Nagle / TcpAckFrequency | Envío inmediato de paquetes | Reinicio; menos latencia en juegos online |
 | **Plan de energía** *(acción)* | Plan Gaming Ultimate: Core Parking off, CPU mín. 100% | Botón, no interruptor |
 
 ### Juegos
@@ -105,6 +124,14 @@ Limpieza rápida (TEMP del usuario + `C:\Windows\Temp`) · Limpieza profunda
 (+ Prefetch, logs CBS, informes WER, caché de Windows Update) · Vaciar papelera ·
 Vaciar caché DNS.
 
+### Inicio
+
+Todas las entradas de las claves Run HKLM/HKCU y de la carpeta Inicio con un
+interruptor por programa. Al desactivar una entrada se guarda un respaldo (los
+valores de registro pasan a una clave de respaldo; los accesos de carpeta se
+mueven a `disabled-startup`), así que *reactivar siempre es posible desde el
+mismo interruptor*.
+
 ### Perfiles
 
 | Perfil | Objetivo |
@@ -113,13 +140,21 @@ Vaciar caché DNS.
 | JUEGOS AAA | Anti-cheats y Xbox OFF, máximo FPS en todo |
 | CLOUD / XBOX | Listo para Game Pass, red pensada para streaming |
 | RESTAURAR WINDOWS | Todos los ajustes a valores de fábrica (anti-cheats intactos) |
-| **Punto de restauración** | Crea/revierte una instantánea JSON de los 24 ajustes |
+| **Punto de restauración** | Crea/revierte una instantánea JSON de los 26 ajustes |
+| **Deshacer último cambio** | Revierte el último cambio aplicado, uno por uno (pila de 50) |
+| **Exportar / Importar copia** | Guarda/aplica el estado de todos los ajustes en un `.json` portable |
 
 ## Deshacer y seguridad
 
+- Cada cambio (interruptor manual, perfil o copia importada) entra en una
+  **pila de deshacer**: *Deshacer último cambio* los revierte uno por uno,
+  hasta 50 entradas atrás.
 - Al aplicar cualquier perfil se **guarda automáticamente** el estado actual en
   `%LOCALAPPDATA%\OptiLite\optilite-restore.json`; *Restaurar último punto*
   revierte todo lo cambiado desde esa instantánea.
+- Los programas de inicio desactivados **nunca se borran**: los valores de
+  registro pasan a una clave de respaldo y los accesos de carpeta a
+  `disabled-startup`, así que siempre se pueden reactivar.
 - *RESTAURAR WINDOWS* devuelve todos los ajustes a los valores de fábrica.
 - Cada acción queda registrada en `%LOCALAPPDATA%\OptiLite\optilite.log`.
 - OptiLite no hace conexiones de red, no descarga nada y no toca archivos
@@ -157,6 +192,6 @@ No. No hay ninguna llamada de red. Compruébalo en el código o con tu firewall.
 
 ## Hoja de ruta
 
-- Interfaz en inglés (i18n)
 - Más ajustes propuestos por la comunidad
 - Modo CLI opcional (`-Apply perfil`, `-Restore`)
+- Programación de cambios grandes

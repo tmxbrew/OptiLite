@@ -20,12 +20,27 @@
 
 ## Features
 
-- **24 reversible tweaks** across Performance, Gaming and Privacy — each one is a
+- **26 reversible tweaks** across Performance, Gaming and Privacy — each one is a
   switch that reads the *actual* system state and applies changes instantly.
+- **ES/EN language switch** in the top bar: the whole UI (panels, cards,
+  descriptions, status messages) flips instantly and the preference is
+  remembered in `%LOCALAPPDATA%\OptiLite\optilite.json`. Spanish is the default
+  on first run.
+- **Startup manager**: a dedicated *Inicio* panel lists everything that runs at
+  boot (HKLM/HKCU Run keys + Startup folder) and lets you disable/re-enable
+  each entry with a switch — nothing is deleted, so it is always reversible.
+- **Undo stack**: every applied change is pushed to a 50-entry stack stored in
+  `optilite-undo.json`; *Undo last change* reverts them one by one.
+- **Backup export/import**: save all setting states to any `.json` file and
+  apply them later or on another PC.
+- **Preview mode**: toggle *Vista previa* and switches/profiles will tell you
+  exactly what they *would* change — without touching anything.
 - **One-click profiles**: Competitivo (Valorant/CS2), Juegos AAA, Cloud/Xbox and
   *Restaurar Windows* (restores every setting to Windows defaults).
 - **Built-in restore point**: a JSON snapshot of all tweak states is saved
   before any profile is applied, and can be rolled back with one click.
+- **Diagnostics on the summary panel**: disk health (SMART), battery wear,
+  running services and the top-5 processes by RAM.
 - **Cleanup actions**: TEMP folders, Prefetch, CBS logs, Windows Error Reports,
   Windows Update cache, Recycle Bin and DNS cache.
 - **Gaming Ultimate power plan** (duplicates Ultimate Performance, disables
@@ -35,7 +50,7 @@
 - **Anti-cheat aware**: Riot Vanguard and FACEIT can be toggled on/off;
   switches turn grey automatically if the software is not installed.
 - **Zero network access.** Everything runs locally; the only files it writes
-  are a log and a restore-point JSON under `%LOCALAPPDATA%\OptiLite\`.
+  are a log and JSON state files under `%LOCALAPPDATA%\OptiLite\`.
 
 ## Quick start
 
@@ -74,6 +89,8 @@
 | Windows Search (indexación) | No background indexing | Search becomes slower |
 | Hibernación e Inicio rápido | Frees `hiberfil.sys` (GBs on disk) | Instant |
 | Apps en segundo plano | UWP apps can't run closed | Desktop apps unaffected |
+| TCP Autotuning | Off fixes the TCP window | Reboot; usually *lowers* throughput — off only for testing |
+| Nagle / TcpAckFrequency | Immediate packet send | Reboot; lower latency for online games |
 | **Plan de energía** *(action)* | Gaming Ultimate plan: Core Parking off, min CPU 100% | Button, not a switch |
 
 ### Juegos (Gaming)
@@ -102,6 +119,13 @@ feedback · Envío de idioma local a sitios web.
 Limpieza rápida (user TEMP + `C:\Windows\Temp`) · Limpieza profunda (+ Prefetch,
 CBS logs, WER reports, Windows Update cache) · Vaciar papelera · Vaciar caché DNS.
 
+### Inicio (Startup)
+
+Every entry from the HKLM/HKCU `Run` keys and the Startup folder with a switch
+per program. Disabling an entry backs it up (registry values move to a backup
+key; folder shortcuts move to a `disabled-startup` folder) so *re-enabling is
+always possible from the same switch*.
+
 ### Perfiles (Profiles)
 
 | Profile | Intent |
@@ -110,13 +134,20 @@ CBS logs, WER reports, Windows Update cache) · Vaciar papelera · Vaciar caché
 | JUEGOS AAA | Anti-cheats and Xbox OFF, max FPS everywhere |
 | CLOUD / XBOX | Game Pass ready, streaming-friendly network settings |
 | RESTAURAR WINDOWS | Every tweak back to Windows defaults (anti-cheats untouched) |
-| **Punto de restauración** | Create/rollback a JSON snapshot of all 24 tweak states |
+| **Punto de restauración** | Create/rollback a JSON snapshot of all 26 tweak states |
+| **Deshacer último cambio** | Reverts the last applied change one at a time (50-entry stack) |
+| **Exportar / Importar copia** | Save/apply all setting states as a portable `.json` |
 
 ## Undo and safety
 
+- Every change (manual switch, profile or imported backup) lands on an **undo
+  stack**: *Undo last change* reverts them one by one, up to 50 entries back.
 - Every profile application **automatically snapshots** the current state to
   `%LOCALAPPDATA%\OptiLite\optilite-restore.json`; *Restaurar último punto*
   reverts everything changed since that snapshot.
+- Disabled startup programs are **never deleted**: registry values move to a
+  backup key and folder shortcuts to `disabled-startup`, so they can always be
+  re-enabled.
 - *RESTAURAR WINDOWS* returns all tweaks to factory defaults.
 - A plain-text log of every action is kept at `%LOCALAPPDATA%\OptiLite\optilite.log`.
 - OptiLite never makes network connections, downloads nothing, and touches
@@ -150,6 +181,6 @@ No. No network calls of any kind. Verify with the source or a firewall monitor.
 
 ## Roadmap
 
-- English UI (i18n)
 - More community-requested tweaks
 - Optional CLI mode (`-Apply preset`, `-Restore`)
+- Schedule/debounce for big changes
